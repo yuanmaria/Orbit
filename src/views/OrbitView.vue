@@ -1,4 +1,11 @@
-<script lang="ts" setup></script>
+<script lang="ts" setup>
+import { useRouter } from 'vue-router'
+const router = useRouter()
+
+function goToOpera() {
+  router.push('/opera')
+}
+</script>
 
 <template>
   <div class="orbit">
@@ -17,6 +24,16 @@
     <img class="planet inner" style="--phase: 50%" src="/orbit/item3.svg" alt="" />
     <img class="planet inner" style="--phase: 75%" src="/orbit/item4.svg" alt="" />
   </div>
+  <button @click="goToOpera()">Dark Mode Opera</button>
 </template>
 
-<style scoped></style>
+<style scoped>
+button {
+  border: none;
+  background-color: white;
+  border-radius: 8px;
+  padding: 10px 20px;
+  font-size: 16px;
+  cursor: pointer;
+}
+</style>
