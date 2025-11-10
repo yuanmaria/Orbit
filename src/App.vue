@@ -7,7 +7,7 @@
       <img class="bg" src="/orbit/orbit-bg.png" alt="" />
 
       <!-- OUTER RING (clockwise) -->
-      <img class="planet outer" style="--phase: 0%" src="/orbit/item5.svg" alt="" />
+      `` <img class="planet outer" style="--phase: 0%" src="/orbit/item5.svg" alt="" />
       <img class="planet outer" style="--phase: 25%" src="/orbit/item6.svg" alt="" />
       <img class="planet outer" style="--phase: 50%" src="/orbit/item7.svg" alt="" />
       <img class="planet outer" style="--phase: 75%" src="/orbit/item8.svg" alt="" />
@@ -38,7 +38,7 @@ body {
 
 /* === Responsive orbit container === */
 .orbit {
-  margin: 50px auto;
+  margin: 50px;
   --size: clamp(280px, 50vw, 820px);
   width: var(--size);
   aspect-ratio: 1 / 1;
@@ -134,7 +134,7 @@ body {
 /* === Small screens === */
 @media screen and (max-width: 768px) {
   .orbit {
-    margin: 30px auto;
+    margin: 30px;
     --size: clamp(260px, calc(100vw - 60px), 600px);
   }
 }
