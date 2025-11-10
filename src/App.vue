@@ -123,4 +123,11 @@ body {
     animation: none;
   }
 }
+
+@media screen and (max-width: 768px) {
+  .orbit {
+    margin: 30px;
+    --size: clamp(280px, calc(100vw - 60px), 600px);
+  }
+}
 </style>
