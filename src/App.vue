@@ -54,6 +54,8 @@ body {
   /* minor nudges if needed */
   --inner-nudge: 0%;
   --outer-nudge: 0%;
+
+  color-scheme: light; /* prevent system dark mode from inverting colors */
 }
 
 /* Orbit background */
