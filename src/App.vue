@@ -22,6 +22,10 @@
 </template>
 
 <style>
+:root {
+  color-scheme: light;
+}
+
 body {
   display: flex;
   margin: 0;
