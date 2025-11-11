@@ -44,6 +44,10 @@ body {
   --inner-nudge: 0%;
   --outer-nudge: 0%;
 
+  /* calculate offset */
+  --outer-offset: calc(var(--r-outer) + var(--outer-nudge));
+  --inner-offset: calc(var(--r-inner) + var(--inner-nudge));
+
   color-scheme: light; /* prevent system dark mode from inverting colors */
 }
 
@@ -77,8 +81,8 @@ body {
   --icon: clamp(32px, 11.8%, 88px);
   width: var(--icon);
   height: var(--icon);
-  offset-path: circle(calc(var(--r-outer) + var(--outer-nudge)) at 50% 50%);
-  -webkit-offset-path: circle(calc(var(--r-outer) + var(--outer-nudge)) at 50% 50%);
+  offset-path: circle(var(--outer-offset) at 50% 50%);
+  -webkit-offset-path: circle(var(--outer-offset) at 50% 50%);
   animation-name: orbit-cw;
 }
 
@@ -87,8 +91,8 @@ body {
   --icon: clamp(24px, 7.4%, 64px);
   width: var(--icon);
   height: var(--icon);
-  offset-path: circle(calc(var(--r-inner) + var(--inner-nudge)) at 50% 50%);
-  -webkit-offset-path: circle(calc(var(--r-inner) + var(--inner-nudge)) at 50% 50%);
+  offset-path: circle(var(--inner-offset) at 50% 50%);
+  -webkit-offset-path: circle(var(--inner-offset) at 50% 50%);
   animation-name: orbit-ccw;
 }
 
