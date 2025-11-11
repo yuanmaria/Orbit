@@ -1,4 +1,51 @@
-<script setup lang="ts"></script>
+<script setup lang="ts">
+import { onMounted, onBeforeUnmount, ref } from 'vue'
+
+const orbitRef = ref<HTMLElement | null>(null)
+let ro: ResizeObserver | null = null
+
+function getIOSMajor(): number | null {
+  const ua = navigator.userAgent
+  const isTouchMac = navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1
+  const isiOSDevice = /iP(hone|od|ad)/.test(ua) || isTouchMac
+  if (!isiOSDevice) return null
+
+  // iOS & iPadOS usually expose "OS 16_6 like Mac OS X"
+  const m = ua.match(/OS (\d+)[._]/)
+  return m && m[1] ? parseInt(m[1], 10) : null
+}
+
+onMounted(() => {
+  const el = orbitRef.value!
+  const iosMajor = getIOSMajor()
+
+  if (iosMajor && iosMajor <= 16) {
+    // mark as legacy to switch CSS rules
+    el.classList.add('ios-legacy')
+
+    const update = () => {
+      const size = el.clientWidth // square box (aspect-ratio:1)
+      // your % radii turned into px (49.88% and 30.13% from your SVG)
+      const rOuter = size * 0.4988
+      const rInner = size * 0.3013
+      const center = size / 2
+
+      el.style.setProperty('--r-outer-px', `${rOuter}px`)
+      el.style.setProperty('--r-inner-px', `${rInner}px`)
+      el.style.setProperty('--cx', `${center}px`)
+      el.style.setProperty('--cy', `${center}px`)
+    }
+
+    ro = new ResizeObserver(update)
+    ro.observe(el)
+    update()
+  }
+})
+
+onBeforeUnmount(() => {
+  ro?.disconnect()
+})
+</script>
 
 <template>
   <div class="container">
@@ -24,31 +71,19 @@ body {
   height: 100vh;
   background: linear-gradient(180deg, #004175 0%, #001841 100%);
 }
-
-/* === Responsive orbit container === */
+/* your existing responsive rules stay the same … */
 .orbit {
-  margin: 50px;
   --size: clamp(280px, 50vw, 820px);
   width: var(--size);
   aspect-ratio: 1 / 1;
   position: relative;
+  margin: 50px;
 
-  /* animation timing */
   --dur: 32000ms;
-
-  /* radii (percent of the box, from SVG) */
   --r-inner: 30.13%;
   --r-outer: 49.88%;
-
-  /* minor nudges if needed */
   --inner-nudge: 0%;
   --outer-nudge: 0%;
-
-  /* calculate offset */
-  --outer-offset: calc(var(--r-outer) + var(--outer-nudge));
-  --inner-offset: calc(var(--r-inner) + var(--inner-nudge));
-
-  color-scheme: light; /* prevent system dark mode from inverting colors */
 }
 
 /* Orbit background */
@@ -68,35 +103,42 @@ body {
   -webkit-offset-rotate: 0deg;
   offset-anchor: 50% 50%;
   -webkit-offset-anchor: 50% 50%;
-
+  animation-duration: var(--dur);
   animation-timing-function: linear;
   animation-iteration-count: infinite;
   animation-fill-mode: both;
-  animation-duration: var(--dur);
   will-change: offset-distance, transform;
 }
 
-/* === Outer ring (clockwise) === */
+/* Default (modern browsers): percent radii */
 .planet.outer {
   --icon: clamp(32px, 11.8%, 88px);
   width: var(--icon);
   height: var(--icon);
-  offset-path: circle(var(--outer-offset) at 50% 50%);
-  -webkit-offset-path: circle(var(--outer-offset) at 50% 50%);
+  offset-path: circle(calc(var(--r-outer) + var(--outer-nudge)) at 50% 50%);
+  -webkit-offset-path: circle(calc(var(--r-outer) + var(--outer-nudge)) at 50% 50%);
   animation-name: orbit-cw;
 }
-
-/* === Inner ring (counter-clockwise) === */
 .planet.inner {
   --icon: clamp(24px, 7.4%, 64px);
   width: var(--icon);
   height: var(--icon);
-  offset-path: circle(var(--inner-offset) at 50% 50%);
-  -webkit-offset-path: circle(var(--inner-offset) at 50% 50%);
+  offset-path: circle(calc(var(--r-inner) + var(--inner-nudge)) at 50% 50%);
+  -webkit-offset-path: circle(calc(var(--r-inner) + var(--inner-nudge)) at 50% 50%);
   animation-name: orbit-ccw;
 }
 
-/* === Keyframes with per-icon phase === */
+/* iOS ≤ 16 override: px radii + px center (set via JS) */
+.orbit.ios-legacy .planet.outer {
+  offset-path: circle(var(--r-outer-px) at var(--cx) var(--cy));
+  -webkit-offset-path: circle(var(--r-outer-px) at var(--cx) var(--cy));
+}
+.orbit.ios-legacy .planet.inner {
+  offset-path: circle(var(--r-inner-px) at var(--cx) var(--cy));
+  -webkit-offset-path: circle(var(--r-inner-px) at var(--cx) var(--cy));
+}
+
+/* Keyframes (phase-based; iOS-friendly) */
 @keyframes orbit-cw {
   from {
     offset-distance: var(--phase);
@@ -107,7 +149,6 @@ body {
     -webkit-offset-distance: calc(var(--phase) + 100%);
   }
 }
-
 @keyframes orbit-ccw {
   from {
     offset-distance: var(--phase);
@@ -119,7 +160,7 @@ body {
   }
 }
 
-/* === Reduced motion preference === */
+/* reduced motion */
 @media (prefers-reduced-motion: reduce) {
   .planet {
     animation: none;

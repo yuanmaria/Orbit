@@ -1,8 +1,7 @@
 <script lang="ts" setup></script>
 
 <template>
-  <div class="orbit">
-    <!-- Orbit Background Image -->
+  <div class="orbit" ref="orbitRef">
     <img class="bg" src="/orbit/orbit-bg.png" alt="" />
 
     <!-- OUTER RING (clockwise) -->
@@ -19,12 +18,4 @@
   </div>
 </template>
 
-<style scoped>
-@media (prefers-color-scheme: dark) {
-  .orbit .bg,
-  .orbit .planet {
-    filter: invert(1) hue-rotate(180deg);
-    -webkit-filter: invert(1) hue-rotate(180deg);
-  }
-}
-</style>
+<style scoped></style>
