@@ -50,6 +50,7 @@ onBeforeUnmount(() => {
 <template>
   <div class="container">
     <router-view />
+    device is {{ getIOSMajor() ?? 'not iOS' }}
   </div>
 </template>
 
